@@ -5,6 +5,7 @@ import config from './utils/config.js'
 import logger from './utils/logger.js'
 import middlewares from './utils/middlewares.js'
 import employeeRouter from './controllers/employees.js'
+import departmentRouter from './controllers/departments.js'
 
 const app = express()
 
@@ -17,12 +18,13 @@ mongoose.connect(config.MONGODB_URI).then(() => {
     logger.error('error in connecting to the database ===>', error)
 })
 
-app.use(cors)
+app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json())
 app.use(middlewares.requestLogger)
 
 app.use('/api/employees', employeeRouter)
+app.use('/api/departments', departmentRouter)
 
 app.use(middlewares.unknownEndpoint)
 app.use(middlewares.errorHandler)

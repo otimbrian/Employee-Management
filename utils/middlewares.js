@@ -12,7 +12,6 @@ const errorHandler = (error, request, response, next) => {
     next(error)
 }
 
-
 // Middleware for
 // Logging the contents of a request.
 const requestLogger = (request, response, next) => {

@@ -1,18 +1,29 @@
 import mongoose from 'mongoose';
+import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 const employeeSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        minlength: 5
+        minlength: 5,
+        unique: true,
     },
     surname: {
         type: String,
         required: true,
         minlength: 5
     },
-    department: String,
+    department: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Department'
+        }
+    ],
 })
+
+// Unique validtor to check uniqueness of the employees being created.
+// To void duplicates.
+employeeSchema.plugin(mongooseUniqueValidator)
 
 employeeSchema.set('toJSON', {
     transform: (document, returnedObject) => {
@@ -22,4 +33,5 @@ employeeSchema.set('toJSON', {
     }
 })
 
-export default mongoose.model('Employee', employeeSchema)
+const Employee =  mongoose.model('Employee', employeeSchema)
+export default Employee
