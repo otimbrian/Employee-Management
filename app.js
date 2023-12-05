@@ -1,5 +1,7 @@
 import express from 'express'
 import mongoose from 'mongoose'
+import 'express-async-errors'
+// import morgan from 'morgan'
 import cors from 'cors'
 import config from './utils/config.js'
 import logger from './utils/logger.js'

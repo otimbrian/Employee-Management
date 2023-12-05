@@ -5,13 +5,13 @@ const employeeSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        minlength: 5,
+        minlength: 3,
         unique: true,
     },
     surname: {
         type: String,
         required: true,
-        minlength: 5
+        minlength: 3
     },
     department: [
         {
@@ -29,7 +29,7 @@ employeeSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
         delete returnedObject._id
-        delete returnedObject._v
+        delete returnedObject.__v
     }
 })
 

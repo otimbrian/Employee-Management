@@ -51,7 +51,7 @@ departmentRouter.get("/:id", async (request, response, next) => {
             response.json(department)
         } else {
             const res = responseMessage(404, "department not found in database")
-            response.status(500).send(res)
+            response.status(404).send(res).end()
         }
     } catch (exception) {
         logger.infor("Error ==> ", exception)
