@@ -60,7 +60,6 @@ employeeRouter.post('/', async (request, response, next) => {
             await Department.findByIdAndUpdate(depart.id, depart)
         }
     )
-
     response.status(201).json(savedEmployee).end()
 })
 
@@ -68,6 +67,5 @@ employeeRouter.post('/', async (request, response, next) => {
 employeeRouter.put('/:id', async (request, response, next) => {
     const updatedEmployee = await Employee.findByIdAndUpdate(request.params.id, request.body, { new: true })
     response.json(updatedEmployee.toJSON())
-
 })
 export default employeeRouter

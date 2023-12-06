@@ -11,7 +11,6 @@ departmentRouter.get('/', async (request, response, next) => {
     if (departments) {
         response.json(departments)
     }
-
 })
 
 // Create a department.
@@ -42,14 +41,12 @@ departmentRouter.get("/:id", async (request, response, next) => {
         const res = responseMessage(404, "department not found in database")
         response.status(404).send(res).end()
     }
-
 })
 
 // Delete  department using Id.
 departmentRouter.delete('/:id', async (request, response, next) => {
     await Department.findByIdAndDelete(request.params.id)
     response.status(204).end()
-
 })
 
 // Update a department using id.
@@ -61,7 +58,6 @@ departmentRouter.put('/:id', async (request, response, next) => {
         res = responseMessage(500, "Failed to Update")
         response.status(500).send(res)
     }
-
 })
 
 export default departmentRouter
