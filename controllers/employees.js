@@ -2,6 +2,7 @@ import express from 'express'
 import Employee from '../models/employee.js'
 import Department from '../models/department.js'
 import { responseMessage } from '../utils/helper.js'
+import logger from '../utils/logger.js'
 
 const employeeRouter = express.Router()
 
@@ -13,7 +14,7 @@ employeeRouter.get('/', async (request, response) => {
 })
 
 // Delete one employee using id.
-employeeRouter.delete('/:id', async (request, response, next) => {
+employeeRouter.delete('/:id', async (request, response) => {
     await Employee.findByIdAndDelete(request.params.id)
     response.status(204).end()
 })
@@ -65,7 +66,39 @@ employeeRouter.post('/', async (request, response) => {
 
 // Update an Employee
 employeeRouter.put('/:id', async (request, response) => {
+    // Get a copy of the employee.
+    const employee = await Employee.findById(request.params.id)
+
+    // logger.infor(employee)
+
+    // Get departments that require updating
+    const departmentsToBeAdded = request.body.department.filter(depart => {
+        return !employee.department.includes(depart.id)
+    })
+
+    // Update the department id list to be updated to the database
+    request.body.department = request.body.department.map(
+        department => department.id
+    )
+
+    // updating the new departments.
+    await departmentsToBeAdded.forEach(
+        async department => {
+            // Add the employee Id to the department as reference
+            department.employees = department.employees.concat(employee.id)
+
+            // Update the department in the database
+            await Department.findByIdAndUpdate(department.id, department)
+        }
+    )
+
     const updatedEmployee = await Employee.findByIdAndUpdate(request.params.id, request.body, { new: true })
-    response.json(updatedEmployee.toJSON())
+    if(updatedEmployee){
+        response.json(updatedEmployee.toJSON())
+    }else{
+        res = responseMessage(500, "Failed to Update")
+        response.status(500).send(res)
+    }
 })
+
 export default employeeRouter
