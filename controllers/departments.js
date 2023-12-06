@@ -6,7 +6,7 @@ import logger from '../utils/logger.js'
 const departmentRouter = express.Router()
 
 // Get all Departments.
-departmentRouter.get('/', async (request, response, next) => {
+departmentRouter.get('/', async (request, response) => {
     const departments = await Department.find({}).populate('employees')
     if (departments) {
         response.json(departments)
@@ -31,7 +31,7 @@ departmentRouter.post('/', async (request, response) => {
 })
 
 // Get a single deprtment using Id
-departmentRouter.get("/:id", async (request, response, next) => {
+departmentRouter.get("/:id", async (request, response) => {
     // const departmentId = Number(request.params.id)
     const department = await Department.findById(request.params.id)
 
@@ -44,13 +44,13 @@ departmentRouter.get("/:id", async (request, response, next) => {
 })
 
 // Delete  department using Id.
-departmentRouter.delete('/:id', async (request, response, next) => {
+departmentRouter.delete('/:id', async (request, response) => {
     await Department.findByIdAndDelete(request.params.id)
     response.status(204).end()
 })
 
 // Update a department using id.
-departmentRouter.put('/:id', async (request, response, next) => {
+departmentRouter.put('/:id', async (request, response) => {
     const updatedDepartment = await Department.findByIdAndUpdate(request.params.id, request.body, { new: true })
     if (updatedDepartment) {
         response.json(updatedDepartment)

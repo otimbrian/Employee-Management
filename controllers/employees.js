@@ -19,7 +19,7 @@ employeeRouter.delete('/:id', async (request, response, next) => {
 })
 
 // Get one employee using id.
-employeeRouter.get('/:id', async (request, response, next) => {
+employeeRouter.get('/:id', async (request, response) => {
     const employee = await Employee.findById(request.params.id)
 
     if (employee) {
@@ -31,7 +31,7 @@ employeeRouter.get('/:id', async (request, response, next) => {
 })
 
 // Create an employee
-employeeRouter.post('/', async (request, response, next) => {
+employeeRouter.post('/', async (request, response) => {
     // Get the request body
     const body = request.body
 
@@ -64,7 +64,7 @@ employeeRouter.post('/', async (request, response, next) => {
 })
 
 // Update an Employee
-employeeRouter.put('/:id', async (request, response, next) => {
+employeeRouter.put('/:id', async (request, response) => {
     const updatedEmployee = await Employee.findByIdAndUpdate(request.params.id, request.body, { new: true })
     response.json(updatedEmployee.toJSON())
 })
