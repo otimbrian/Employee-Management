@@ -1,84 +1,73 @@
 import express from 'express'
-// const employeeRouter = require('express').Router()
 import Employee from '../models/employee.js'
 import Department from '../models/department.js'
-import logger from '../utils/logger.js'
+import { responseMessage } from '../utils/helper.js'
 
 const employeeRouter = express.Router()
 
+// Get all Employees in the database
 employeeRouter.get('/', async (request, response) => {
     const employees = await Employee.find({}).populate('department')
-    response.json(employees)
+    response.json(employees.map(employee => employee.toJSON()))
 
 })
 
-// Create An Employee.
+// Delete one employee using id.
+employeeRouter.delete('/:id', async (request, response, next) => {
+    await Employee.findByIdAndDelete(request.params.id)
+    response.status(204).end()
+})
 
+// Get one employee using id.
+employeeRouter.get('/:id', async (request, response, next) => {
+    const employee = await Employee.findById(request.params.id)
+
+    if (employee) {
+        response.status(200).json(employee)
+    } else {
+        const res = responseMessage(404, "Employee not found in database")
+        response.status(404).send(res)
+    }
+})
+
+// Create an employee
 employeeRouter.post('/', async (request, response, next) => {
-
-    // get the request body.
+    // Get the request body
     const body = request.body
 
-    // const department = Department.findById(body.departmentId)
     const departmentsIds = []
+    body.department.forEach(department => departmentsIds.push(department.id))
 
-    body.department.forEach(async department => {
-        const dep = await Department.findById(department.id)
-        departmentsIds.push(dep)
+    // Create a new Employee object
+    const newEmployee = new Employee({
+        name: body.name,
+        surname: body.surname,
+        department: departmentsIds
     })
-    logger.infor(departmentsIds)
 
-    // const departments = await Department.find({
-    //     "id" : {
-    //       "$in" : departmentsIds
-    //      }
-    //   })
+    // save the employee
+    const savedEmployee = await newEmployee.save()
 
-    // const dep = await Department.findById(departmentsIds[0])
+    // Add the employee reference id to Each department.
+    // logger.infor(body.department)
+    await body.department.forEach(
+        async depart => {
 
-    // logger.infor(dep)
-    // console.log("Retrieved Departments ==>", departments)
-    
-    // // logger.infor("Department after adding =====>", departments)
+            // Add the reference id
+            depart.employees = depart.employees.concat(savedEmployee._id)
 
-    // const newEmployee = new Employee({
-    //     name: body.name,
-    //     surname: body.surname,
-    //     department: body.department
-    // })
+            // Update the department
+            await Department.findByIdAndUpdate(depart.id, depart)
+        }
+    )
 
-    // logger.infor("New Employee", newEmployee)
-
-    // try {
-    //     const createdEmployee = await newEmployee.save()
-    //     logger.infor("Created Employee", createdEmployee)
-
-    //     if (createdEmployee) {
-    //         logger.infor("Some Departments ===> ", departments)
-    //         departments.forEach(async depart => {
-    //             depart.employees.concat(createdEmployee.id)
-    //             await depart.save()
-    //         })
-
-    //         response.status(201).json(createdEmployee)
-    //     } else {
-    //         const res = responseMessage(500, "Error Saving Data to Datbase")
-    //         response.status(500).send(res)
-    //     }
-    // } catch (err) {
-    //     logger.error("Error in Creating Employee ===>", err.message)
-    //     next(err)
-    // }
-
+    response.status(201).json(savedEmployee).end()
 })
 
+// Update an Employee
+employeeRouter.put('/:id', async (request, response, next) => {
+    const updatedEmployee = await Employee.findByIdAndUpdate(request.params.id, request.body, { new: true })
+    response.json(updatedEmployee.toJSON())
 
-employeeRouter.delete('/:id', async (request, response, next) => {
-    try {
-        await Employee.findByIdAndDelete(request.params.id)
-        response.status(204).end()
-    } catch (exception) {
-        next(exception)
-    }
 })
 export default employeeRouter
