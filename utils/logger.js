@@ -1,15 +1,20 @@
 
 // Logging information
 const infor = (...message) => {
-  console.log(...message)
+    if (process.env.NODE_ENV !== 'test') {
+        console.log(...message)
+    }
+
 }
 
 // Logging error information
 const error = (...errorMessage) => {
-  console.log(...errorMessage)
+    if (process.env.NODE_ENV !== 'test') {
+        console.log(...errorMessage)
+    }
 }
 
 export default {
-  infor,
-  error
+    infor,
+    error
 }
