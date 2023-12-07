@@ -10,7 +10,6 @@ const employeeRouter = express.Router()
 employeeRouter.get('/', async (request, response) => {
     const employees = await Employee.find({}).populate('department')
     response.json(employees.map(employee => employee.toJSON()))
-
 })
 
 // Delete one employee using id.
@@ -26,7 +25,7 @@ employeeRouter.get('/:id', async (request, response) => {
     if (employee) {
         response.status(200).json(employee)
     } else {
-        const res = responseMessage(404, "Employee not found in database")
+        const res = responseMessage(404, 'Employee not found in database')
         response.status(404).send(res)
     }
 })
@@ -51,16 +50,13 @@ employeeRouter.post('/', async (request, response) => {
 
     // Add the employee reference id to Each department.
     // logger.infor(body.department)
-    await body.department.forEach(
-        async depart => {
+    await body.department.forEach(async depart => {
+        // Add the reference id
+        depart.employees = depart.employees.concat(savedEmployee._id)
 
-            // Add the reference id
-            depart.employees = depart.employees.concat(savedEmployee._id)
-
-            // Update the department
-            await Department.findByIdAndUpdate(depart.id, depart)
-        }
-    )
+        // Update the department
+        await Department.findByIdAndUpdate(depart.id, depart)
+    })
     response.status(201).json(savedEmployee).end()
 })
 
@@ -82,21 +78,23 @@ employeeRouter.put('/:id', async (request, response) => {
     )
 
     // updating the new departments.
-    await departmentsToBeAdded.forEach(
-        async department => {
-            // Add the employee Id to the department as reference
-            department.employees = department.employees.concat(employee.id)
+    await departmentsToBeAdded.forEach(async department => {
+        // Add the employee Id to the department as reference
+        department.employees = department.employees.concat(employee.id)
 
-            // Update the department in the database
-            await Department.findByIdAndUpdate(department.id, department)
-        }
+        // Update the department in the database
+        await Department.findByIdAndUpdate(department.id, department)
+    })
+
+    const updatedEmployee = await Employee.findByIdAndUpdate(
+        request.params.id,
+        request.body,
+        { new: true }
     )
-
-    const updatedEmployee = await Employee.findByIdAndUpdate(request.params.id, request.body, { new: true })
-    if(updatedEmployee){
+    if (updatedEmployee) {
         response.json(updatedEmployee.toJSON())
-    }else{
-        res = responseMessage(500, "Failed to Update")
+    } else {
+        res = responseMessage(500, 'Failed to Update')
         response.status(500).send(res)
     }
 })

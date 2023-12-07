@@ -13,12 +13,15 @@ const app = express()
 
 mongoose.set('strictQuery', false)
 
-logger.infor("Connecting to", config.MONGODB_URI)
-mongoose.connect(config.MONGODB_URI).then(() => {
-    logger.infor('Connected to Database')
-}).catch((error) => {
-    logger.error('error in connecting to the database ===>', error)
-})
+logger.infor('Connecting to', config.MONGODB_URI)
+mongoose
+    .connect(config.MONGODB_URI)
+    .then(() => {
+        logger.infor('Connected to Database')
+    })
+    .catch(error => {
+        logger.error('error in connecting to the database ===>', error)
+    })
 
 app.use(cors())
 app.use(express.static('dist'))

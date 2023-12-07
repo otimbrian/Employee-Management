@@ -1,12 +1,12 @@
-import mongoose from 'mongoose';
-import mongooseUniqueValidator from 'mongoose-unique-validator';
+import mongoose from 'mongoose'
+import mongooseUniqueValidator from 'mongoose-unique-validator'
 
 const departmentSchema = new mongoose.Schema({
     name: {
         type: String,
         minlength: 5,
         required: true,
-        unique: true,
+        unique: true
     },
     employees: [
         {

@@ -25,20 +25,20 @@ departmentRouter.post('/', async (request, response) => {
     if (savedDepartment) {
         response.status(201).json(savedDepartment)
     } else {
-        const res = responseMessage(500, "Error Saving Data to Datbase")
+        const res = responseMessage(500, 'Error Saving Data to Datbase')
         response.status(500).send(res)
     }
 })
 
 // Get a single deprtment using Id
-departmentRouter.get("/:id", async (request, response) => {
+departmentRouter.get('/:id', async (request, response) => {
     // const departmentId = Number(request.params.id)
     const department = await Department.findById(request.params.id)
 
     if (department) {
         response.json(department)
     } else {
-        const res = responseMessage(404, "department not found in database")
+        const res = responseMessage(404, 'department not found in database')
         response.status(404).send(res).end()
     }
 })
@@ -51,11 +51,15 @@ departmentRouter.delete('/:id', async (request, response) => {
 
 // Update a department using id.
 departmentRouter.put('/:id', async (request, response) => {
-    const updatedDepartment = await Department.findByIdAndUpdate(request.params.id, request.body, { new: true })
+    const updatedDepartment = await Department.findByIdAndUpdate(
+        request.params.id,
+        request.body,
+        { new: true }
+    )
     if (updatedDepartment) {
         response.json(updatedDepartment)
     } else {
-        res = responseMessage(500, "Failed to Update")
+        res = responseMessage(500, 'Failed to Update')
         response.status(500).send(res)
     }
 })
