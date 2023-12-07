@@ -4,7 +4,7 @@ import app from '../app'
 
 const testApi = supertest(app)
 
-test('Employees re returned as json', async () => {
+test('Employees should be returned as json', async () => {
     await testApi
         .get('/api/employees')
         .expect(200)
