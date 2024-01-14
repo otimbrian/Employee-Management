@@ -4,11 +4,13 @@ import app from '../app'
 
 const testApi = supertest(app)
 
-test('Employees should be returned as json', async () => {
-    await testApi
-        .get('/api/employees')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+describe('Employee Tests', () => {
+    test('Employees should be returned as json', async () => {
+        await testApi
+            .get('/api/employees')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    })
 })
 
 afterAll(async () => {
