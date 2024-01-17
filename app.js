@@ -8,6 +8,7 @@ import logger from './utils/logger.js'
 import middlewares from './utils/middlewares.js'
 import employeeRouter from './controllers/employees.js'
 import departmentRouter from './controllers/departments.js'
+import loginRouter from './controllers/login.js'
 
 const app = express()
 
@@ -31,6 +32,7 @@ app.use(middlewares.requestLogger)
 
 app.use('/api/employees', employeeRouter)
 app.use('/api/departments', departmentRouter)
+app.use('/api/login', loginRouter)
 
 app.use(middlewares.unknownEndpoint)
 app.use(middlewares.errorHandler)

@@ -1,4 +1,5 @@
 import express from 'express'
+import bcrypt from 'bcrypt'
 import Employee from '../models/employee.js'
 import Department from '../models/department.js'
 import { responseMessage } from '../utils/helper.js'
@@ -38,10 +39,16 @@ employeeRouter.post('/', async (request, response) => {
     const departmentsIds = []
     body.department.forEach(department => departmentsIds.push(department.id))
 
+    const saltRounds = 10
+    const passwordHass = await bcrypt.hash(body.password, saltRounds)
+
     // Create a new Employee object
     const newEmployee = new Employee({
         name: body.name,
         surname: body.surname,
+        email: body.email,
+        isAdmin: body.isAdmin,
+        passwordHass: passwordHass,
         department: departmentsIds
     })
 

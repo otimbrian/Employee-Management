@@ -13,6 +13,19 @@ const employeeSchema = new mongoose.Schema({
         required: true,
         minlength: 3
     },
+    passwordHass: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    isAdmin: {
+        type: Boolean,
+        required: true
+    },
     department: [
         {
             type: mongoose.Schema.Types.ObjectId,
