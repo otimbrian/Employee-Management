@@ -9,13 +9,13 @@ import logger from '../utils/logger.js'
 const employeeRouter = express.Router()
 
 // Get all Employees in the database
-employeeRouter.get('/', async (request, response) => {
+employeeRouter.get('/', middleware.tokenExtracter, middleware.checkAdmin, async (request, response) => {
     const employees = await Employee.find({}).populate('department')
     response.json(employees.map(employee => employee.toJSON()))
 })
 
 // Delete one employee using id.
-employeeRouter.delete('/:id', async (request, response) => {
+employeeRouter.delete('/:id', middleware.tokenExtracter, middleware.checkAdmin, async (request, response) => {
     await Employee.findByIdAndDelete(request.params.id)
     response.status(204).end()
 })
@@ -33,7 +33,7 @@ employeeRouter.get('/:id', middleware.tokenExtracter, middleware.checkAdmin, asy
 })
 
 // Create an employee
-employeeRouter.post('/', middleware.tokenExtracter, async (request, response) => {
+employeeRouter.post('/', middleware.tokenExtracter, middleware.checkAdmin, async (request, response) => {
     // Get the request body
     const body = request.body
 

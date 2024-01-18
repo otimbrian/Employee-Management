@@ -1,12 +1,12 @@
 import express, { response } from 'express'
 import Department from '../models/department.js'
 import { responseMessage } from '../utils/helper.js'
-import logger from '../utils/logger.js'
+import middlewares from '../utils/middlewares.js'
 
 const departmentRouter = express.Router()
 
 // Get all Departments.
-departmentRouter.get('/', async (request, response) => {
+departmentRouter.get('/', middlewares.tokenExtracter, middlewares.checkAdmin, async (request, response) => {
     const departments = await Department.find({}).populate('employees')
     if (departments) {
         response.json(departments)
@@ -14,7 +14,7 @@ departmentRouter.get('/', async (request, response) => {
 })
 
 // Create a department.
-departmentRouter.post('/', async (request, response) => {
+departmentRouter.post('/', middlewares.tokenExtracter, middlewares.checkAdmin, async (request, response) => {
     const department = request.body
 
     const newDepartment = new Department({
@@ -31,7 +31,7 @@ departmentRouter.post('/', async (request, response) => {
 })
 
 // Get a single deprtment using Id
-departmentRouter.get('/:id', async (request, response) => {
+departmentRouter.get('/:id', middlewares.tokenExtracter, middlewares.checkAdmin, async (request, response) => {
     // const departmentId = Number(request.params.id)
     const department = await Department.findById(request.params.id)
 
@@ -44,7 +44,7 @@ departmentRouter.get('/:id', async (request, response) => {
 })
 
 // Delete  department using Id.
-departmentRouter.delete('/:id', async (request, response) => {
+departmentRouter.delete('/:id', middlewares.tokenExtracter, middlewares.checkAdmin, async (request, response) => {
     await Department.findByIdAndDelete(request.params.id)
     response.status(204).end()
 })
