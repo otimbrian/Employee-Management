@@ -1,0 +1,7 @@
+POST http://localhost:3001/api/departments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiT3RpbSBCcmlhbiIsImVtYWlsIjoib3RpbXMuYnJpYW5AZ21haWwuY29tIiwiaWQiOiI2NWE5NzEzN2FiYjI0NjY4ZmZkMzQ2YWYiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3MDU2MDQwMzMsImV4cCI6MTcwNTYwNzYzM30.W0ZSjiABWtywCY9Vsuzn4IvptjXE_XsvuBcYL1nNFn8
+
+{
+	
+}

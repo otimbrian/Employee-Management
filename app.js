@@ -8,14 +8,15 @@ import logger from './utils/logger.js'
 import middlewares from './utils/middlewares.js'
 import employeeRouter from './controllers/employees.js'
 import departmentRouter from './controllers/departments.js'
+import loginRouter from './controllers/login.js'
 
 const app = express()
 
 mongoose.set('strictQuery', false)
 
-logger.infor('Connecting to', config.MONGODB_URI)
+logger.infor('Connecting to -->', config.MONGODB_URI_CONNECTION_STRING)
 mongoose
-    .connect(config.MONGODB_URI)
+    .connect(config.MONGODB_URI_CONNECTION_STRING)
     .then(() => {
         logger.infor('Connected to Database')
     })
@@ -31,6 +32,7 @@ app.use(middlewares.requestLogger)
 
 app.use('/api/employees', employeeRouter)
 app.use('/api/departments', departmentRouter)
+app.use('/api/login', loginRouter)
 
 app.use(middlewares.unknownEndpoint)
 app.use(middlewares.errorHandler)
