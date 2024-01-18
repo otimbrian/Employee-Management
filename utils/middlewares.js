@@ -40,12 +40,29 @@ const unknownEndpoint = (request, response) => {
 
 // Middleware for Extrcting the user token.
 const tokenExtracter = (request, response, next) => {
-    // Get the uthorization header
-    const authorization = request.get('authoriztion')
+    logger.infor("token extraction middleware ....................")
+    // logger.infor(request)
+    // Get the authorization header
+    const authorization = request.get('Authorization')
+
+    console.log("authorization ---->", authorization);
 
     if (authorization && authorization.startsWith('Bearer ')) {
         // Get the token and assign it to the request.
-        request.token = authorization.replace('Bearer ', '')
+        const token = authorization.replace('Bearer ', '')
+        request.token = token
+
+        // Decode the token.
+        const decodedToken = jwt.verify(token, process.env.SECRET_KEY)
+
+        // If there's no Id then the token is invalid.
+        if (!decodedToken.id) {
+            const res = responseMessage(401, 'missing or invalid token', null)
+            return response.status(401).send(res).end()
+        }
+
+        // Add the decoded token to the request.
+        request.decodedToken = decodedToken
     } else {
         request.token = null
     }
@@ -54,17 +71,25 @@ const tokenExtracter = (request, response, next) => {
 
 // Middleware to extrct the user information from the token.
 const userExtractor = async (request, response, next) => {
-    // Decode the token
-    const decodedToken = jwt.verify(request.token, process.env.SECRET_KEY)
+    // Get the user and add it to the request.
+    request.user = await Employee.findById(request.decodedToken.id)
+    
+    next()
+}
 
-    // If there's no Id then the token is invalid.
-    if (!decodedToken.id) {
-        const res = responseMessage(401, 'missing or invalid token', null)
+// Admin Check middleware
+const checkAdmin = async (request, response, next) => {
+    console.log("Check Admin middleware............");
+    // console.log("Basic request ----->", request);
+    console.log("Decoded token ----->",request.decodedToken);
+    if(!request.token){
+        const res = responseMessage(401, "missing token")
         return response.status(401).send(res).end()
     }
-
-    // Get the user and add it to the request.
-    request.user = await Employee.findById(decodedToken.id)
+    if(!request.decodedToken.isAdmin){
+        const res = responseMessage(401, "action unauthorised", null)
+        return response.status(401).send(res).end()
+    }
 
     next()
 }
@@ -74,5 +99,6 @@ export default {
     requestLogger,
     unknownEndpoint,
     tokenExtracter,
-    userExtractor
+    userExtractor,
+    checkAdmin
 }

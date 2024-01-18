@@ -21,7 +21,7 @@ employeeRouter.delete('/:id', async (request, response) => {
 })
 
 // Get one employee using id.
-employeeRouter.get('/:id', async (request, response) => {
+employeeRouter.get('/:id', middleware.tokenExtracter, middleware.checkAdmin, async (request, response) => {
     const employee = await Employee.findById(request.params.id)
 
     if (employee) {
@@ -33,7 +33,7 @@ employeeRouter.get('/:id', async (request, response) => {
 })
 
 // Create an employee
-employeeRouter.post('/', middleware.userExtractor, async (request, response) => {
+employeeRouter.post('/', middleware.tokenExtracter, async (request, response) => {
     // Get the request body
     const body = request.body
 

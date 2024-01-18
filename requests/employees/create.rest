@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/employees
+Content-Type: application/json
+
+{
+	"name": "Otim Brian",
+	"surname": "otimb",
+	"email": "otims.brian@gmail.com",
+	"isAdmin": true,
+	"password": "test-password",
+	"department": []
+}
