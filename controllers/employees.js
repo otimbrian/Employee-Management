@@ -26,7 +26,7 @@ employeeRouter.get('/:id', async (request, response) => {
     if (employee) {
         response.status(200).json(employee)
     } else {
-        const res = responseMessage(404, 'Employee not found in database')
+        const res = responseMessage(404, 'Employee not found in database', null)
         response.status(404).send(res)
     }
 })
@@ -101,7 +101,7 @@ employeeRouter.put('/:id', async (request, response) => {
     if (updatedEmployee) {
         response.json(updatedEmployee.toJSON())
     } else {
-        res = responseMessage(500, 'Failed to Update')
+        res = responseMessage(500, 'Failed to Update', null)
         response.status(500).send(res)
     }
 })

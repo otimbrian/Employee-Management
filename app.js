@@ -14,9 +14,9 @@ const app = express()
 
 mongoose.set('strictQuery', false)
 
-logger.infor('Connecting to', config.MONGODB_URI)
+logger.infor('Connecting to -->', config.MONGODB_URI_CONNECTION_STRING)
 mongoose
-    .connect(config.MONGODB_URI)
+    .connect(config.MONGODB_URI_CONNECTION_STRING)
     .then(() => {
         logger.infor('Connected to Database')
     })
