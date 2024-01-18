@@ -2,6 +2,7 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import Employee from '../models/employee.js'
 import Department from '../models/department.js'
+import middleware from '../utils/middlewares.js'
 import { responseMessage } from '../utils/helper.js'
 import logger from '../utils/logger.js'
 
@@ -32,7 +33,7 @@ employeeRouter.get('/:id', async (request, response) => {
 })
 
 // Create an employee
-employeeRouter.post('/', async (request, response) => {
+employeeRouter.post('/', middleware.userExtractor, async (request, response) => {
     // Get the request body
     const body = request.body
 
