@@ -1,0 +1,30 @@
+PUT http://localhost:3001/api/employees/65bad4b004133bf044983e1f
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiT3RpbSBCcmlhbiIsImVtYWlsIjoib3RpbXMuYnJpYW5AZ21haWwuY29tIiwiaWQiOiI2NWE5NzEzN2FiYjI0NjY4ZmZkMzQ2YWYiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE3MDY3NDI5MjUsImV4cCI6MTcwNjc0NjUyNX0.gYyORWvqe2Hwy-GcgO1XX3aQPTDDyu7zukbX9pqQLzQ
+
+ {
+    "name": "New User",
+    "surname": "trial-username",
+    "passwordHass": "$2b$10$5WoHPRzd3XJv0xiggzNXMOP6CAqcFDISbzEtqobeobKuuRGkIScK2",
+    "email": "new.brian@gmail.com",
+    "isAdmin": true,
+    "department": [{
+    "name": "Restorative Dentistry",
+    "employees": [
+      {
+        "name": "Lisa Harris",
+        "surname": "Lisa",
+        "passwordHass": "$2b$10$TulMtnDGPKoWo45vfgkd4ey8jqcp9bq6WnF6zVkFOm8ucML3zHB4i",
+        "email": "lisa@gmail.com",
+        "isAdmin": false,
+        "department": [
+          "655ff7dab5fb5df2b2f132fc",
+          "655ff790b5fb5df2b2f132f7"
+        ],
+        "id": "65baca47111e1e2b0c409a2f"
+      }
+    ],
+    "id": "655ff790b5fb5df2b2f132f7"
+  }],
+    "id": "65bad4b004133bf044983e1f"
+  }
