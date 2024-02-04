@@ -40,12 +40,12 @@ const unknownEndpoint = (request, response) => {
 
 // Middleware for Extrcting the user token.
 const tokenExtracter = (request, response, next) => {
-    logger.infor("token extraction middleware ....................")
+    logger.infor('token extraction middleware ....................')
     // logger.infor(request)
     // Get the authorization header
     const authorization = request.get('Authorization')
 
-    console.log("authorization ---->", authorization);
+    console.log('authorization ---->', authorization)
 
     if (authorization && authorization.startsWith('Bearer ')) {
         // Get the token and assign it to the request.
@@ -73,21 +73,21 @@ const tokenExtracter = (request, response, next) => {
 const userExtractor = async (request, response, next) => {
     // Get the user and add it to the request.
     request.user = await Employee.findById(request.decodedToken.id)
-    
+
     next()
 }
 
 // Admin Check middleware
 const checkAdmin = async (request, response, next) => {
-    console.log("Check Admin middleware............");
+    console.log('Check Admin middleware............')
     // console.log("Basic request ----->", request);
-    console.log("Decoded token ----->",request.decodedToken);
-    if(!request.token){
-        const res = responseMessage(401, "missing token")
+    console.log('Decoded token ----->', request.decodedToken)
+    if (!request.token) {
+        const res = responseMessage(401, 'missing token')
         return response.status(401).send(res).end()
     }
-    if(!request.decodedToken.isAdmin){
-        const res = responseMessage(401, "action unauthorised", null)
+    if (!request.decodedToken.isAdmin) {
+        const res = responseMessage(401, 'action unauthorised', null)
         return response.status(401).send(res).end()
     }
 

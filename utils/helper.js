@@ -1,14 +1,12 @@
-
-
 export const responseMessage = (status, message, data) => {
     return data === null
         ? {
             status: status,
-            message: message,
+            message: message
         }
         : {
             status: status,
             message: message,
-            data: data,
+            data: data
         }
 }
