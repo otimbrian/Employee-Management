@@ -2,6 +2,7 @@ import express, { response } from 'express'
 import Department from '../models/department.js'
 import { responseMessage } from '../utils/helper.js'
 import middlewares from '../utils/middlewares.js'
+import Employee from '../models/employee.js'
 
 const departmentRouter = express.Router()
 
@@ -49,13 +50,54 @@ departmentRouter.delete('/:id', middlewares.tokenExtracter, middlewares.checkAdm
     response.status(204).end()
 })
 
+//todo <-------- alot to be done here.
 // Update a department using id.
 departmentRouter.put('/:id', async (request, response) => {
+
+    // Find the department by id
+    const department = await Department.findById(request.params.id)
+
+    // Filter out employees that need updating.
+    const employeesToBeUpdated = request.body.employees.filter(employee => {
+        return !department.employees.includes(employee.id)
+    })
+
+    // Change the list of department Objects in the employees to
+    // A list of department Ids if they exist.
+    if (employeesToBeUpdated.length !== 0) {
+        employeesToBeUpdated.forEach(element => {
+            let departmentIdIds = []
+
+            element.department.forEach(dep => {
+                departmentIdIds.push(dep.id)
+            })
+            element.department = departmentIdIds
+        })
+    }
+
+
+     // Update change the department object to id to be updated to the database
+     request.body.employees = request.body.employees.map(
+        employee => employee.id
+    )
+
     const updatedDepartment = await Department.findByIdAndUpdate(
         request.params.id,
         request.body,
         { new: true }
-    )
+    ).populate('employees')
+
+     // updating the employees to
+    //  have the Ids of the updated department..
+     await employeesToBeUpdated.forEach(async employee => {
+        
+        // Add the employee Id to the department as reference
+        employee.department = employee.department.concat(department._id)
+
+        // Update the department in the database
+        await Employee.findByIdAndUpdate(employee.d, employee)
+    })
+
     if (updatedDepartment) {
         response.json(updatedDepartment)
     } else {
