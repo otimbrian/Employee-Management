@@ -38,7 +38,6 @@ departmentRouter.post(
       name: department.name,
       employees: employeeIdList,
     });
-
     const savedDepartment = await newDepartment.save();
 
     // Add the created department to the respectve
