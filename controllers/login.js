@@ -10,10 +10,10 @@ loginRouter.post('/', async (request, response) => {
     const { email, password } = request.body
 
     const user = await Employee.findOne({ email })
-    const correctPssword =
+    const correctPassword =
         user === null ? false : await bcrypt.compare(password, user.passwordHass)
 
-    if (!(user && correctPssword)) {
+    if (!(user && correctPassword)) {
         const res = responseMessage(401, 'invalid email or password', null)
         return response.status(401).send(res).end()
     }
