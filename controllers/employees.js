@@ -48,6 +48,78 @@ employeeRouter.post(
     }
 )
 
+// Delete one employee using id.
+employeeRouter.delete(
+    '/:id',
+    middleware.tokenExtracter,
+    middleware.checkAdmin,
+    async (request, response) => {
+        await Employee.findByIdAndDelete(request.params.id)
+        response.status(204).end()
+    }
+)
+
+// Get one employee using id.
+employeeRouter.get(
+    '/:id',
+    // middleware.tokenExtracter,
+    // middleware.checkAdmin,
+    async (request, response) => {
+        const employee = await Employee.findById(request.params.id).populate(
+            'department'
+        )
+
+        if (employee) {
+            response.status(200).json(employee)
+        } else {
+            const res = responseMessage(404, 'Employee not found in database', null)
+            response.status(404).send(res).end()
+        }
+    }
+)
+
+// Change Employee Password.
+employeeRouter.put(
+    '/change',
+    middleware.tokenExtracter,
+    middleware.userExtractor,
+    async (request, response) => {
+        // Check if the old password provided matches the one in the database.
+        const correctUserPassword = request.user
+            ? bcrypt.compare(request.body.oldPassword, request.user.passwordHass)
+            : false
+        // If the old password provided doesnt match,
+        // Send invalid password response.
+        if (!correctUserPassword) {
+            const res = responseMessage(401, 'Invalid Password', null)
+            response.status(401).send(res).end()
+        } else {
+            // If the old password Matches,
+            // Proceed to create a password hass of the new password.
+            const newPasswordHass = await hassPassword(request.body.newPassword)
+
+            // Create a user Object for update.
+            // Change the password Hass value
+            request.user.passwordHass = newPasswordHass
+
+            // Carry out the update operation.
+            const updatedEmployee = await Employee.findByIdAndUpdate(
+                request.user._id,
+                request.user,
+                { returnOriginal: false }
+            ).populate('department')
+
+            if (updatedEmployee) {
+                // If the update was successful, send the updated object.
+                response.json(updatedEmployee.toJSON())
+            } else {
+                res = responseMessage(500, 'Failed to Update', '')
+                response.status(500).send(res)
+            }
+        }
+    }
+)
+
 // Get all Employees in the database
 employeeRouter.get(
     '/',
@@ -101,66 +173,6 @@ employeeRouter.put('/:id', async (request, response) => {
         // Update the department in the database
         await Department.findByIdAndUpdate(department.id, department)
     })
-
-    if (updatedEmployee) {
-        response.json(updatedEmployee.toJSON())
-    } else {
-        res = responseMessage(500, 'Failed to Update', null)
-        response.status(500).send(res)
-    }
-})
-
-// Delete one employee using id.
-employeeRouter.delete(
-    '/:id',
-    middleware.tokenExtracter,
-    middleware.checkAdmin,
-    async (request, response) => {
-        await Employee.findByIdAndDelete(request.params.id)
-        response.status(204).end()
-    }
-)
-
-// Get one employee using id.
-employeeRouter.get(
-    '/:id',
-    // middleware.tokenExtracter,
-    // middleware.checkAdmin,
-    async (request, response) => {
-        const employee = await Employee.findById(request.params.id).populate(
-            'department'
-        )
-
-        if (employee) {
-            response.status(200).json(employee)
-        } else {
-            const res = responseMessage(404, 'Employee not found in database', null)
-            response.status(404).send(res).end()
-        }
-    }
-)
-
-// Change Employee Password.
-employeeRouter.put('/change-password', middleware.tokenExtracter, middleware.userExtractor, async (request, response) => {
-    const correctUserPassword = request.user ? false : bcrypt.compare(request.body.oldPassword, request.user.passwordHass)
-
-    if (!correctUserPassword){
-        const res = responseMessage(401, "Invalid Password", null)
-        response.status(401).send(res).end()
-    }
-
-    const newPasswordHass = hassPassword(request.body.newPassword)
-
-    const updatedUser = {
-        ...request.user,
-        passwordHass: newPasswordHass
-    }
-
-    const updatedEmployee = await Employee.findByIdAndUpdate(
-        request.user.id,
-        updatedUser,
-        { returnOriginal: false }
-    ).populate('department')
 
     if (updatedEmployee) {
         response.json(updatedEmployee.toJSON())

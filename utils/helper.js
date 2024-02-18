@@ -15,7 +15,7 @@ export const responseMessage = (status, message, data) => {
 
 export const hassPassword = async (password) => {
     const saltRounds = 10
-    const passwordHass = await bcrypt.hash(body.password, saltRounds)
+    const passwordHass = await bcrypt.hash(password, saltRounds)
 
     return passwordHass
 }
