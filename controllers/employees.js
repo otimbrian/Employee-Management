@@ -34,17 +34,25 @@ employeeRouter.post(
 
         // save the employee
         const savedEmployee = await newEmployee.save()
+        console.log("Saved Employee ----->", savedEmployee)
 
         // Add the employee reference id to Each department.
         // logger.infor(body.department)
         await body.department.forEach(async depart => {
+
+            // Transform the list of employees into a list of ids
+            depart.employees = await depart.employees.map(emplo => emplo.id)
+
             // Add the reference id
+            // Add the new created user
             depart.employees = depart.employees.concat(savedEmployee._id)
 
             // Update the department
             await Department.findByIdAndUpdate(depart.id, depart)
         })
-        response.status(201).json(savedEmployee).end()
+
+        const requiredUser = await Employee.findById(savedEmployee._id).populate('department')
+        response.status(201).json(requiredUser).end()
     }
 )
 
@@ -154,7 +162,7 @@ employeeRouter.put('/:id', async (request, response) => {
         })
     }
 
-    // Update the department id list to be updated to the database
+    // Update the department to a list id list to be updated to the database
     request.body.department = request.body.department.map(
         department => department.id
     )
